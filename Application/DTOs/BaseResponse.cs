@@ -1,8 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-
 namespace CitiWatch.Application.DTOs
 {
     public class BaseResponse<T>

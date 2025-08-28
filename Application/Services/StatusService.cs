@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CitiWatch.Application.DTOs;
 using CitiWatch.Application.Interfaces;
 using CitiWatch.Infrastructure.Context;
