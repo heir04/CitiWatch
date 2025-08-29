@@ -70,6 +70,41 @@ namespace CitiWatch.Application.Services
             return response;
         }
 
+        public async Task<BaseResponse<IEnumerable<ComplaintResponseDto>>> GetAllUserComplaints()
+        {
+            var response = new BaseResponse<IEnumerable<ComplaintResponseDto>>();
+
+            var userId = _validatorHelper.GetUserId();
+            if (userId == Guid.Empty)
+            {
+                response.Message = "User not found";
+                return response;
+            }
+
+            var complaints = await _context.Complaints.Where(c => c.UserId == userId && !c.IsDeleted).ToListAsync();
+            if (!complaints.Any())
+            {
+                response.Message = "Not found!";
+                return response;
+            }
+
+            response.Data = [..complaints.Select(c => new ComplaintResponseDto
+            {
+                Id = c.Id,
+                Title = c.Title,
+                Description = c.Description,
+                CategoryName = c.Category?.Name,
+                StatusName = c.Status?.Name,
+                Latitude = c.Latitude,
+                Longitude = c.Longitude,
+                MediaUrl = c.MediaUrl,
+                CreatedOn = c.Createdon
+            })];
+            response.Message = "Success";
+            response.Status = true;
+            return response;
+        }
+
         public async Task<BaseResponse<ComplaintCreateDto>> Submit(ComplaintCreateDto createDto, IFormFile formFile)
         {
             var response = new BaseResponse<ComplaintCreateDto>();
@@ -86,9 +121,9 @@ namespace CitiWatch.Application.Services
             {
                 try
                 {
-                    
+
                     mediaUrl = await _cloudinaryService.UploadFileAsync(formFile);
-                    
+
                 }
                 catch (ArgumentException ex)
                 {

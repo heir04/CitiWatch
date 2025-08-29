@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CitiWatch.Application.DTOs;
 using CitiWatch.Application.Interfaces;
 using Microsoft.AspNetCore.Authorization;
@@ -15,8 +11,8 @@ namespace CitiWatch.Host.Controllers
     {
         private readonly ICategoryService _categoryService = categoryService;
 
-        [HttpGet("Create")]
-        [Authorize]
+        [HttpPost("Create")]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Create(CategoryCreateDto createDto)
         {
             var response = await _categoryService.Create(createDto);
@@ -24,7 +20,7 @@ namespace CitiWatch.Host.Controllers
         }
 
         [HttpPut("Update/{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Update([FromRoute]Guid id, CategoryUpdateDto updateDto)
         {
             var response = await _categoryService.Update(id, updateDto);
@@ -32,7 +28,7 @@ namespace CitiWatch.Host.Controllers
         }
 
         [HttpPut("Delete/{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete([FromRoute]Guid id)
         {
             var response = await _categoryService.Delete(id);
@@ -40,7 +36,7 @@ namespace CitiWatch.Host.Controllers
         }
 
         [HttpGet("Get/{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Get([FromRoute] Guid id)
         {
             var response = await _categoryService.Get(id);

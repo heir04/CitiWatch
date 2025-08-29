@@ -8,11 +8,11 @@ namespace CitiWatch.Application.Helper
     public class JwtHelper(IConfiguration configuration)
     {
         private readonly IConfiguration _configuration = configuration;
-        public string GenerateToken(string username, string role, Guid userId)
+        public string GenerateToken(string email, string role, Guid userId)
         {
             var claims = new[]
             {
-                new Claim(JwtRegisteredClaimNames.Sub, username),
+                new Claim(JwtRegisteredClaimNames.Sub, email),
                 new Claim(JwtRegisteredClaimNames.Jti, userId.ToString()),
                 new Claim(ClaimTypes.Role, role)
             };

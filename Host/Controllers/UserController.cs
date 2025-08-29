@@ -1,7 +1,3 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 using CitiWatch.Application.DTOs;
 using CitiWatch.Application.Helper;
 using CitiWatch.Application.Interfaces;
@@ -53,7 +49,7 @@ namespace CitiWatch.Host.Controllers
         }
 
         [HttpGet("GetAll")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> GetAll()
         {
             var response = await _userService.GetAll();
@@ -61,7 +57,7 @@ namespace CitiWatch.Host.Controllers
         }
 
         [HttpPost("Delete/{id}")]
-        [Authorize]
+        [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)
         {
             var response = await _userService.Delete(id);

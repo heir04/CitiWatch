@@ -7,6 +7,7 @@ namespace CitiWatch.Application.Interfaces
         Task<BaseResponse<ComplaintCreateDto>> Submit(ComplaintCreateDto createDto, IFormFile formFile);
         Task<BaseResponse<ComplaintResponseDto>> GetById(Guid id);
         Task<BaseResponse<IEnumerable<ComplaintResponseDto>>> GetAll();
+        Task<BaseResponse<IEnumerable<ComplaintResponseDto>>> GetAllUserComplaints();
         Task<BaseResponse<ComplaintResponseDto>> UpdateStatus(Guid complaintId, ComplaintStatusUpdateDto statusDto);
     }
 }

@@ -2,6 +2,7 @@ using CitiWatch.Application.DTOs;
 using CitiWatch.Application.Helper;
 using CitiWatch.Application.Interfaces;
 using CitiWatch.Domain.Entities;
+using CitiWatch.Domain.Enums;
 using CitiWatch.Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
 
@@ -97,7 +98,7 @@ namespace CitiWatch.Application.Services
                 FullName = userCreateDto.FullName,
                 Email = userCreateDto.Email,
                 PasswordHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password),
-                Role = userCreateDto.Role
+                Role = UserRole.User
             };
 
             await _context.Users.AddAsync(user);

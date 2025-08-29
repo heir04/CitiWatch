@@ -1,6 +1,10 @@
 using System.Text;
+using CitiWatch.Application.Helper;
+using CitiWatch.Application.Interfaces;
+using CitiWatch.Application.Services;
 using CitiWatch.Infrastructure.Config;
 using CitiWatch.Infrastructure.Context;
+using CitiWatch.Infrastructure.Services;
 using CloudinaryDotNet;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +14,13 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<ICategoryService, CategoryService>();
+builder.Services.AddScoped<IComplaintService, ComplaintService>();
+builder.Services.AddScoped<IStatusService, StatusService>();
+builder.Services.AddScoped<ValidatorHelper>();
+builder.Services.AddScoped<JwtHelper>();
+builder.Services.AddScoped<CloudinaryService>();
 // Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
 builder.Services.AddOpenApi();
 

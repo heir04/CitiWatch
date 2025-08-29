@@ -11,6 +11,19 @@ This document provides detailed API specifications for integrating with the Citi
 - **Content-Type**: `application/json` (unless specified otherwise)
 - **Authorization Header**: `Authorization: Bearer <token>`
 
+## 🔑 Role-Based Access Control
+
+The API implements role-based authorization with the following roles:
+
+- **User Role** (Role = 0): Standard users who can submit complaints and view their own data
+- **Admin Role** (Role = 1): Administrators who can manage all data and user accounts
+
+### Access Levels:
+- **Public**: No authentication required
+- **Any Authenticated User**: Requires valid JWT token (any role)
+- **User Role Only**: Requires JWT token with User role
+- **Admin Role Only**: Requires JWT token with Admin role
+
 ---
 
 ## 🔐 Authentication Endpoints
@@ -18,6 +31,8 @@ This document provides detailed API specifications for integrating with the Citi
 ### 1. User Login
 
 **POST** `/User/Login`
+
+**Authorization**: None Required (Public Endpoint)
 
 **Content-Type**: `application/json`
 
@@ -50,6 +65,8 @@ This document provides detailed API specifications for integrating with the Citi
 ### 2. User Registration
 
 **POST** `/User/Create`
+
+**Authorization**: None Required (Public Endpoint)
 
 **Content-Type**: `application/json`
 
@@ -100,7 +117,7 @@ This document provides detailed API specifications for integrating with the Citi
 
 **GET** `/User/GetAll`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
 
 **Content-Type**: `application/json`
 
@@ -128,7 +145,7 @@ This document provides detailed API specifications for integrating with the Citi
 
 **PUT** `/User/Update/{id}`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Any Authenticated User**
 
 **Content-Type**: `application/json`
 
@@ -161,13 +178,85 @@ This document provides detailed API specifications for integrating with the Citi
 
 ---
 
+### 4.1. Delete User
+
+**POST** `/User/Delete/{id}`
+
+**Authorization**: Required (JWT Token) - **Admin Role Only**
+
+**Content-Type**: `application/json`
+
+**URL Parameters**:
+- `id`: User GUID (required)
+
+**Success Response** (200 OK):
+```json
+{
+  "message": "User deleted successfully",
+  "status": true,
+  "data": null
+}
+```
+
+**Error Response** (400 Bad Request):
+```json
+{
+  "message": "User not found",
+  "status": false,
+  "data": null
+}
+```
+
+---
+
 ## 📝 Complaint Endpoints
 
 ### 5. Get All Complaints
 
 **GET** `/Complaint/GetAll`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
+
+**Content-Type**: `application/json`
+
+**Success Response** (200 OK):
+```json
+{
+  "message": "Success",
+  "status": true,
+  "data": [
+    {
+      "id": "123e4567-e89b-12d3-a456-426614174000",
+      "title": "Pothole on Main Street",
+      "description": "Large pothole causing vehicle damage near intersection",
+      "categoryName": "Road Issues",
+      "statusName": "Submitted",
+      "latitude": "40.7128",
+      "longitude": "-74.0060",
+      "mediaUrl": "https://res.cloudinary.com/your-cloud/image/upload/v1234567890/complaints/photo.jpg",
+      "createdOn": "2025-08-28T10:30:00Z",
+      "lastModifiedOn": "2025-08-28T10:30:00Z"
+    }
+  ]
+}
+```
+
+**Error Response** (200 OK - No Data):
+```json
+{
+  "message": "No complaints found",
+  "status": false,
+  "data": null
+}
+```
+
+---
+
+### 5.1. Get User's Own Complaints
+
+**GET** `/Complaint/GetAllUserComplaints`
+
+**Authorization**: Required (JWT Token) - **User Role Only**
 
 **Content-Type**: `application/json`
 
@@ -208,7 +297,7 @@ This document provides detailed API specifications for integrating with the Citi
 
 **GET** `/Complaint/GetById/{id}`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
 
 **Content-Type**: `application/json`
 
@@ -250,7 +339,7 @@ This document provides detailed API specifications for integrating with the Citi
 
 **POST** `/Complaint/Submit`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **User Role Only**
 
 **Content-Type**: `multipart/form-data`
 
@@ -302,7 +391,7 @@ formFile: [File Upload - JPG/JPEG/PNG/GIF, Max 10MB]
 
 **PUT** `/Complaint/UpdateStatus/{id}`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
 
 **Content-Type**: `application/json`
 
@@ -342,7 +431,7 @@ formFile: [File Upload - JPG/JPEG/PNG/GIF, Max 10MB]
 
 **GET** `/Category/GetAll`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Any Authenticated User**
 
 **Content-Type**: `application/json`
 
@@ -374,7 +463,7 @@ formFile: [File Upload - JPG/JPEG/PNG/GIF, Max 10MB]
 
 **POST** `/Category/Create`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
 
 **Content-Type**: `application/json`
 
@@ -405,7 +494,7 @@ formFile: [File Upload - JPG/JPEG/PNG/GIF, Max 10MB]
 
 **PUT** `/Category/Update/{id}`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
 
 **Content-Type**: `application/json`
 
@@ -435,13 +524,80 @@ formFile: [File Upload - JPG/JPEG/PNG/GIF, Max 10MB]
 
 ---
 
+### 11.1. Delete Category
+
+**PUT** `/Category/Delete/{id}`
+
+**Authorization**: Required (JWT Token) - **Admin Role Only**
+
+**Content-Type**: `application/json`
+
+**URL Parameters**:
+- `id`: Category GUID (required)
+
+**Success Response** (200 OK):
+```json
+{
+  "message": "Category deleted successfully",
+  "status": true,
+  "data": null
+}
+```
+
+**Error Response** (400 Bad Request):
+```json
+{
+  "message": "Category not found",
+  "status": false,
+  "data": null
+}
+```
+
+---
+
+### 11.2. Get Category by ID
+
+**GET** `/Category/Get/{id}`
+
+**Authorization**: Required (JWT Token) - **Admin Role Only**
+
+**Content-Type**: `application/json`
+
+**URL Parameters**:
+- `id`: Category GUID (required)
+
+**Success Response** (200 OK):
+```json
+{
+  "message": "Success",
+  "status": true,
+  "data": {
+    "id": "123e4567-e89b-12d3-a456-426614174000",
+    "name": "Road Issues",
+    "createdOn": "2025-08-28T10:30:00Z",
+    "lastModifiedOn": "2025-08-28T10:30:00Z"
+  }
+}
+```
+
+**Error Response** (404 Not Found):
+```json
+{
+  "message": "Category not found",
+  "status": false,
+  "data": null
+}
+```
+
+---
+
 ## 📊 Status Endpoints
 
 ### 12. Get All Statuses
 
 **GET** `/Status/GetAll`
 
-**Authorization**: Required (JWT Token)
+**Authorization**: Required (JWT Token) - **Admin Role Only**
 
 **Content-Type**: `application/json`
 
@@ -586,6 +742,14 @@ const submitComplaint = async (formData) => {
 5. **Store JWT token securely** - consider httpOnly cookies for production
 6. **Handle loading states** for better UX during API calls
 7. **Implement error boundaries** to catch and display API errors gracefully
+8. **Role-based access control** - Check user role before showing UI elements for restricted endpoints
+9. **Users can only access their own data** - User role endpoints filter data automatically
+10. **Admin role required** - Many management endpoints require admin privileges
+
+### Role-Based UI Considerations:
+- **User Role**: Show complaint submission, view own complaints, view categories
+- **Admin Role**: Show user management, all complaints, category management, status management
+- **Both Roles**: Can update their own profile information
 
 ---
 

@@ -16,8 +16,6 @@ namespace CitiWatch.Application.DTOs
         [Required]
         [StringLength(100, MinimumLength = 6)]
         public string Password { get; set; } = string.Empty;
-
-        public UserRole Role { get; set; } = UserRole.User;
     }
 
     public class UserUpdateDto
