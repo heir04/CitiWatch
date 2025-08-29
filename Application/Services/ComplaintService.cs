@@ -46,7 +46,8 @@ namespace CitiWatch.Application.Services
         {
             var response = new BaseResponse<ComplaintResponseDto>();
 
-            var complaint = await _context.Complaints.FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
+            var complaint = await _context.Complaints.Include(c => c.Category)
+               .Include(c => c.Status).FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
             if (complaint is null)
             {
                 response.Message = "Not found!";
@@ -81,7 +82,8 @@ namespace CitiWatch.Application.Services
                 return response;
             }
 
-            var complaints = await _context.Complaints.Where(c => c.UserId == userId && !c.IsDeleted).ToListAsync();
+            var complaints = await _context.Complaints.Where(c => c.UserId == userId && !c.IsDeleted).Include(c => c.Category)
+               .Include(c => c.Status).ToListAsync();
             if (!complaints.Any())
             {
                 response.Message = "Not found!";
