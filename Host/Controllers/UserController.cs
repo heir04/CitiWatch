@@ -40,6 +40,13 @@ namespace CitiWatch.Host.Controllers
             return response.Status ? Ok(response) : BadRequest(response);
         }
 
+        [HttpPost("CreateAdmin")]
+        public async Task<IActionResult> CreateAdmin(UserCreateDto userDto)
+        {
+            var response = await _userService.RegisterAdmin(userDto);
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+
         [HttpPut("Update/{id}")]
         [Authorize]
         public async Task<IActionResult> Update([FromRoute] Guid id, UserUpdateDto userDto)

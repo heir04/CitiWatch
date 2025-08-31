@@ -111,6 +111,35 @@ namespace CitiWatch.Application.Services
             return response;
         }
 
+        public async Task<BaseResponse<UserCreateDto>> RegisterAdmin(UserCreateDto userCreateDto)
+        {
+            var response = new BaseResponse<UserCreateDto>();
+
+            var existingUser = await _context.Users.AnyAsync(x => x.Email == userCreateDto.Email && !x.IsDeleted);
+            if (existingUser)
+            {
+                response.Message = "User already exists.";
+                return response;
+            }
+
+            var user = new User
+            {
+                FullName = userCreateDto.FullName,
+                Email = userCreateDto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(userCreateDto.Password),
+                Role = UserRole.Admin
+            };
+
+            await _context.Users.AddAsync(user);
+            await _context.SaveChangesAsync();
+
+            response.Data = userCreateDto;
+            response.Message = "User registered successfully.";
+            response.Status = true;
+
+            return response;
+        }
+
         public async Task<BaseResponse<bool>> Update(Guid userId, UserUpdateDto userUpdateDto)
         {
             var response = new BaseResponse<bool>();
