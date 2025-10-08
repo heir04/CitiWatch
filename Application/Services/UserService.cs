@@ -134,7 +134,7 @@ namespace CitiWatch.Application.Services
             await _context.SaveChangesAsync();
 
             response.Data = userCreateDto;
-            response.Message = "User registered successfully.";
+            response.Message = "Admin registered successfully.";
             response.Status = true;
 
             return response;
