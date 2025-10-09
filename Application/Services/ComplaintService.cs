@@ -17,7 +17,7 @@ namespace CitiWatch.Application.Services
         {
             var response = new BaseResponse<IEnumerable<ComplaintResponseDto>>();
             var complaints = await _context.Complaints.Include(c => c.Category)
-               .Include(c => c.Status).ToListAsync();
+               .Include(c => c.Status).Include(c => c.User).ToListAsync();
 
             if (!complaints.Any())
             {
@@ -35,7 +35,14 @@ namespace CitiWatch.Application.Services
                 Latitude = c.Latitude,
                 Longitude = c.Longitude,
                 MediaUrl = c.MediaUrl,
-                CreatedOn = c.Createdon
+                CreatedOn = c.Createdon,
+                User = new UserResponseDto
+                {
+                    Id = c.User!.Id,
+                    FullName = c.User.FullName,
+                    Email = c.User.Email,
+                    Role = c.User.Role
+                }
             })];
             response.Status = true;
             response.Message = "Success";
@@ -46,7 +53,7 @@ namespace CitiWatch.Application.Services
         {
             var response = new BaseResponse<ComplaintResponseDto>();
 
-            var complaint = await _context.Complaints.Include(c => c.Category)
+            var complaint = await _context.Complaints.Include(c => c.Category).Include(c => c.User)
                .Include(c => c.Status).FirstOrDefaultAsync(c => c.Id == id && !c.IsDeleted);
             if (complaint is null)
             {
@@ -64,7 +71,14 @@ namespace CitiWatch.Application.Services
                 Latitude = complaint.Latitude,
                 Longitude = complaint.Longitude,
                 MediaUrl = complaint.MediaUrl,
-                CreatedOn = complaint.Createdon
+                CreatedOn = complaint.Createdon,
+                User = new UserResponseDto
+                {
+                    Id = complaint.User!.Id,
+                    FullName = complaint.User.FullName,
+                    Email = complaint.User.Email,
+                    Role = complaint.User.Role
+                }
             };
             response.Message = "Success";
             response.Status = true;

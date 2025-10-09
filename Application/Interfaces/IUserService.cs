@@ -10,5 +10,7 @@ namespace CitiWatch.Application.Interfaces
         Task<BaseResponse<IEnumerable<UserResponseDto>>> GetAll();
         Task<BaseResponse<bool>> Update(Guid userId, UserUpdateDto userUpdateDto);
         Task<BaseResponse<bool>> Delete(Guid userId);
+        Task<BaseResponse<UserResponseDto>> GetCurrentUser();
+        Task<BaseResponse<UserResponseDto>> GetById(Guid userId);
     }
 }

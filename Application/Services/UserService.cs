@@ -158,10 +158,59 @@ namespace CitiWatch.Application.Services
 
             await _context.SaveChangesAsync();
 
-            response.Data = true;
             response.Message = "User updated successfully.";
             response.Status = true;
 
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseDto>> GetCurrentUser()
+        {
+            var response = new BaseResponse<UserResponseDto>();
+            var userId = _validatorHelper.GetUserId();
+
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId && !x.IsDeleted);
+            if (user == null)
+            {
+                response.Message = "User not found.";
+                return response;
+            }
+
+            response.Data = new UserResponseDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedOn = user.Createdon
+            };
+            response.Message = "Success";
+            response.Status = true;
+
+            return response;
+        }
+
+        public async Task<BaseResponse<UserResponseDto>> GetById(Guid userId)
+        {
+            var response = new BaseResponse<UserResponseDto>();
+
+            var user = await _context.Users.FirstOrDefaultAsync(x => x.Id == userId && !x.IsDeleted);
+            if (user == null)
+            {
+                response.Message = "User not found.";
+                return response;
+            }
+
+            response.Data = new UserResponseDto
+            {
+                Id = user.Id,
+                FullName = user.FullName,
+                Email = user.Email,
+                Role = user.Role,
+                CreatedOn = user.Createdon,
+            };
+            response.Status = true;
+            response.Message = "User retrieved successfully.";
             return response;
         }
     }

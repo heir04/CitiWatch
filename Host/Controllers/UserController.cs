@@ -63,6 +63,21 @@ namespace CitiWatch.Host.Controllers
             return response.Status ? Ok(response) : BadRequest(response);
         }
 
+        [HttpGet("GetCurrentUser")]
+        [Authorize]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var response = await _userService.GetCurrentUser();
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+        [HttpGet("GetById/{id}")]
+        [Authorize(Roles = "Admin")]
+        public async Task<IActionResult> GetById([FromRoute] Guid id)
+        {
+            var response = await _userService.GetById(id);
+            return response.Status ? Ok(response) : BadRequest(response);
+        }
+
         [HttpPost("Delete/{id}")]
         [Authorize(Roles ="Admin")]
         public async Task<IActionResult> Delete([FromRoute] Guid id)

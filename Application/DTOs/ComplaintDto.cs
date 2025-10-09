@@ -46,6 +46,7 @@ namespace CitiWatch.Application.DTOs
         public string? Latitude { get; set; }
         public string? Longitude { get; set; }
         public string? MediaUrl { get; set; }
+        public UserResponseDto? User { get; set; }
         public DateTime CreatedOn { get; set; }
         public DateTime LastModifiedOn { get; set; }
     }
